@@ -9,11 +9,12 @@ const Calendar = () => {
     setTaskInput(event.target.value);
   };
 
-  const handleAddTask = (dayOfWeek) => {
+  const handleAddTask = (dayOfWeek, time) => {
     if (taskInput.trim() !== '') {
       const newTask = {
         id: Date.now(),
-        text: taskInput.trim()
+        text: taskInput.trim(),
+        time: time
       };
 
       setTasks((prevTasks) => {
@@ -45,21 +46,29 @@ const Calendar = () => {
         type="text"
         value={taskInput}
         onChange={handleInputChange}
-        placeholder="Enter a daily task"
+        placeholder="Enter a task"
       />
-      <button onClick={() => handleAddTask(daysOfWeek[new Date().getDay()])}>Add Task</button>
       <ul>
         {daysOfWeek.map(day => (
           <li key={day}>
             <h2>{day}</h2>
             <ul>
-              {tasks[day] && tasks[day].map(task => (
-                <li key={task.id}>
-                  {task.text}
-                  <button onClick={() => handleRemoveTask(day, task.id)}>Remove</button>
-                </li>
-              ))}
+              {tasks[day] &&
+                tasks[day].map(task => (
+                  <li key={task.id}>
+                    <span>{task.time}: </span>
+                    {task.text}
+                    <button onClick={() => handleRemoveTask(day, task.id)}>Remove</button>
+                  </li>
+                ))}
             </ul>
+            <div>
+              {Array.from({ length: 24 }, (_, i) => i).map(hour => (
+                <button key={hour} onClick={() => handleAddTask(day, hour)}>
+                  {hour}:00
+                </button>
+              ))}
+            </div>
           </li>
         ))}
       </ul>
