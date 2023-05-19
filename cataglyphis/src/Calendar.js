@@ -1,12 +1,19 @@
 import React, { useState } from 'react';
+import './Calendar.css';
 
 const Calendar = () => {
   const [tasks, setTasks] = useState({});
   const [taskInput, setTaskInput] = useState('');
+  const [selectedTime, setSelectedTime] = useState('');
+
   const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
   const handleInputChange = (event) => {
     setTaskInput(event.target.value);
+  };
+
+  const handleTimeSelection = (time) => {
+    setSelectedTime(time);
   };
 
   const handleAddTask = (dayOfWeek, time) => {
@@ -14,7 +21,7 @@ const Calendar = () => {
       const newTask = {
         id: Date.now(),
         text: taskInput.trim(),
-        time: time
+        time: time,
       };
 
       setTasks((prevTasks) => {
@@ -28,50 +35,70 @@ const Calendar = () => {
       });
 
       setTaskInput('');
+      setSelectedTime('');
     }
   };
 
   const handleRemoveTask = (dayOfWeek, taskId) => {
     setTasks((prevTasks) => {
       const updatedTasks = { ...prevTasks };
-      updatedTasks[dayOfWeek] = updatedTasks[dayOfWeek].filter(task => task.id !== taskId);
+      updatedTasks[dayOfWeek] = updatedTasks[dayOfWeek].filter((task) => task.id !== taskId);
       return updatedTasks;
     });
   };
 
   return (
-    <div>
-      <h1>Calendar</h1>
-      <input
-        type="text"
-        value={taskInput}
-        onChange={handleInputChange}
-        placeholder="Enter a task"
-      />
-      <ul>
-        {daysOfWeek.map(day => (
-          <li key={day}>
-            <h2>{day}</h2>
-            <ul>
+    <div className="calendar">
+      <h1 className="calendar-heading">Calendar</h1>
+      <div className="task-input">
+        <input
+          type="text"
+          value={taskInput}
+          onChange={handleInputChange}
+          placeholder="Enter a task"
+        />
+        <div className="time-selection">
+          <span className="time-selection-label">Select Time:</span>
+          {Array.from({ length: 24 }, (_, i) => (
+            <button
+              key={i}
+              className={`time-selection-button ${selectedTime === i ? 'selected' : ''}`}
+              onClick={() => handleTimeSelection(i)}
+            >
+              {i}:00
+            </button>
+          ))}
+        </div>
+        <button
+          className="add-task-button"
+          onClick={() => handleAddTask(daysOfWeek[new Date().getDay()], selectedTime)}
+          disabled={!taskInput.trim() || selectedTime === ''}
+        >
+          Add Task
+        </button>
+      </div>
+      <div className="calendar-grid">
+        {daysOfWeek.map((day) => (
+          <div key={day} className="calendar-day">
+            <h2 className="day-heading">{day}</h2>
+            <ul className="task-list">
               {tasks[day] &&
-                tasks[day].map(task => (
-                  <li key={task.id}>
-                    <span>{task.time}: </span>
-                    {task.text}
-                    <button onClick={() => handleRemoveTask(day, task.id)}>Remove</button>
+                tasks[day].map((task) => (
+                  <li key={task.id} className="task-item">
+                    <span className="task-time">{task.time}:00</span>
+                    <span className="task-text">{task.text}</span>
+                    <button
+                      className="remove-task-button"
+                      onClick={() => handleRemoveTask(day, task.id)}
+                    >
+                      Remove
+                    </button>
                   </li>
                 ))}
             </ul>
-            <div>
-              {Array.from({ length: 24 }, (_, i) => i).map(hour => (
-                <button key={hour} onClick={() => handleAddTask(day, hour)}>
-                  {hour}:00
-                </button>
-              ))}
-            </div>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };
