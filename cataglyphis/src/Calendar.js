@@ -1,27 +1,41 @@
 import React, { useState } from 'react';
 
 const Calendar = () => {
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState({});
   const [taskInput, setTaskInput] = useState('');
+  const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
   const handleInputChange = (event) => {
     setTaskInput(event.target.value);
   };
 
-  const handleAddTask = () => {
+  const handleAddTask = (dayOfWeek) => {
     if (taskInput.trim() !== '') {
       const newTask = {
         id: Date.now(),
         text: taskInput.trim()
       };
 
-      setTasks((prevTasks) => [...prevTasks, newTask]);
+      setTasks((prevTasks) => {
+        const updatedTasks = { ...prevTasks };
+        if (updatedTasks[dayOfWeek]) {
+          updatedTasks[dayOfWeek].push(newTask);
+        } else {
+          updatedTasks[dayOfWeek] = [newTask];
+        }
+        return updatedTasks;
+      });
+
       setTaskInput('');
     }
   };
 
-  const handleRemoveTask = (taskId) => {
-    setTasks((prevTasks) => prevTasks.filter(task => task.id !== taskId));
+  const handleRemoveTask = (dayOfWeek, taskId) => {
+    setTasks((prevTasks) => {
+      const updatedTasks = { ...prevTasks };
+      updatedTasks[dayOfWeek] = updatedTasks[dayOfWeek].filter(task => task.id !== taskId);
+      return updatedTasks;
+    });
   };
 
   return (
@@ -31,14 +45,21 @@ const Calendar = () => {
         type="text"
         value={taskInput}
         onChange={handleInputChange}
-        placeholder="Enter a task"
+        placeholder="Enter a daily task"
       />
-      <button onClick={handleAddTask}>Add Task</button>
+      <button onClick={() => handleAddTask(daysOfWeek[new Date().getDay()])}>Add Task</button>
       <ul>
-        {tasks.map(task => (
-          <li key={task.id}>
-            {task.text}
-            <button onClick={() => handleRemoveTask(task.id)}>Remove</button>
+        {daysOfWeek.map(day => (
+          <li key={day}>
+            <h2>{day}</h2>
+            <ul>
+              {tasks[day] && tasks[day].map(task => (
+                <li key={task.id}>
+                  {task.text}
+                  <button onClick={() => handleRemoveTask(day, task.id)}>Remove</button>
+                </li>
+              ))}
+            </ul>
           </li>
         ))}
       </ul>
