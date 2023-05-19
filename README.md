@@ -1,1 +1,1 @@
-# cataglyphis
+# Cataglyphis
