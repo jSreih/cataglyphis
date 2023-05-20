@@ -16,24 +16,32 @@ const Calendar = () => {
     setSelectedTime(time);
   };
 
-  const handleAddTask = (dayOfWeek, time) => {
-    if (taskInput.trim() !== '') {
+  const handleAddTask = (dayOfWeek) => {
+    if (taskInput.trim() !== '' && selectedTime !== '') {
       const newTask = {
         id: Date.now(),
         text: taskInput.trim(),
-        time: time,
+        time: selectedTime,
       };
-
+  
       setTasks((prevTasks) => {
         const updatedTasks = { ...prevTasks };
         if (updatedTasks[dayOfWeek]) {
-          updatedTasks[dayOfWeek].push(newTask);
+          // Check if a task with the same time already exists
+          const existingTask = updatedTasks[dayOfWeek].find((task) => task.time === selectedTime);
+          if (existingTask) {
+            // If a task with the same time exists, update its text
+            existingTask.text = newTask.text;
+          } else {
+            // If no task with the same time exists, add the new task
+            updatedTasks[dayOfWeek].push(newTask);
+          }
         } else {
           updatedTasks[dayOfWeek] = [newTask];
         }
         return updatedTasks;
       });
-
+  
       setTaskInput('');
       setSelectedTime('');
     }
@@ -71,7 +79,7 @@ const Calendar = () => {
         </div>
         <button
           className="add-task-button"
-          onClick={() => handleAddTask(daysOfWeek[new Date().getDay()], selectedTime)}
+          onClick={() => handleAddTask(daysOfWeek[new Date().getDay()])}
           disabled={!taskInput.trim() || selectedTime === ''}
         >
           Add Task
