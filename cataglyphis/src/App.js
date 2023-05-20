@@ -1,4 +1,4 @@
-
+import Title from './Title'
 import Calendar from './Calendar';
 
 
@@ -7,8 +7,7 @@ import Calendar from './Calendar';
 const App = () => {
   return (
     <div>
-
-      <h1>My App</h1>
+      <Title />
       <Calendar />
     </div>
   );
