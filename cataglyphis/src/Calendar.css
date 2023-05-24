@@ -29,21 +29,16 @@
   .add-task-button {
     height: 30px;
   }  
-  
+
   /* Add styles for the selected time selection button */
 .time-selection-button.selected {
-  background-color: darkblue; /* Update with your desired background color */
+  background-color: gray; /* Update with your desired background color */
   color: white; /* Update with your desired text color */
 }
 
 /* Add styles for the selected day selection button */
 .day-selection-button.selected {
-  background-color: darkblue; /* Update with your desired background color */
+  background-color: gray; /* Update with your desired background color */
   color: white; /* Update with your desired text color */
 }
 
-/* Add styles for the selected remove task button */
-.remove-task-button.selected {
-  background-color: darkblue; /* Update with your desired background color */
-  color: white; /* Update with your desired text color */
-}
