@@ -24,7 +24,7 @@
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    position: relative; right: 5px;
+    position: relative; right: 5px; top: 5px
   }
   
   .add-task-button {
@@ -42,7 +42,6 @@
   color: white;
   border-color: rgb(0, 0, 0);
 }
-
 
 
 .task-text{
