@@ -28,17 +28,24 @@ const Calendar = () => {
         text: taskInput.trim(),
         time: selectedTime,
       };
-
+  
       setTasks((prevTasks) => {
         const updatedTasks = { ...prevTasks };
         if (updatedTasks[selectedDay]) {
-          updatedTasks[selectedDay].push(newTask);
+          const existingTask = updatedTasks[selectedDay].find((task) => task.time === selectedTime);
+          if (existingTask) {
+            // Task already exists for the selected day and time, skip adding the new task
+            return updatedTasks;
+          } else {
+            // Append the new task to the existing tasks array
+            updatedTasks[selectedDay].push(newTask);
+          }
         } else {
           updatedTasks[selectedDay] = [newTask];
         }
         return updatedTasks;
       });
-
+  
       setTaskInput('');
       setSelectedTime('');
       setSelectedDay('');
@@ -127,3 +134,4 @@ const Calendar = () => {
 };
 
 export default Calendar;
+  
