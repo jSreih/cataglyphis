@@ -8,17 +8,22 @@ const Calendar = () => {
   const [selectedDay, setSelectedDay] = useState('');
 
   const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const timesOfDay = Array.from({ length: 24 }, (_, i) => {
+    const hour = i === 0 ? 12 : i > 12 ? i - 12 : i;
+    const period = i < 12 ? 'AM' : 'PM';
+    return `${hour}:00 ${period}`;
+  });
 
   const handleInputChange = (event) => {
     setTaskInput(event.target.value);
   };
 
-  const handleTimeSelection = (time) => {
-    setSelectedTime(time);
+  const handleTimeSelection = (event) => {
+    setSelectedTime(event.target.value);
   };
 
-  const handleDaySelection = (day) => {
-    setSelectedDay(day);
+  const handleDaySelection = (event) => {
+    setSelectedDay(event.target.value);
   };
 
   const handleAddTask = () => {
@@ -28,24 +33,17 @@ const Calendar = () => {
         text: taskInput.trim(),
         time: selectedTime,
       };
-  
+
       setTasks((prevTasks) => {
         const updatedTasks = { ...prevTasks };
         if (updatedTasks[selectedDay]) {
-          const existingTask = updatedTasks[selectedDay].find((task) => task.time === selectedTime);
-          if (existingTask) {
-            // Task already exists for the selected day and time, skip adding the new task
-            return updatedTasks;
-          } else {
-            // Append the new task to the existing tasks array
-            updatedTasks[selectedDay].push(newTask);
-          }
+          updatedTasks[selectedDay].push(newTask);
         } else {
           updatedTasks[selectedDay] = [newTask];
         }
         return updatedTasks;
       });
-  
+
       setTaskInput('');
       setSelectedTime('');
       setSelectedDay('');
@@ -72,29 +70,31 @@ const Calendar = () => {
         />
         <div className="time-selection">
           <span className="time-selection-label">Select Time:</span>
-          <div className="time-buttons">
-            {Array.from({ length: 24 }, (_, i) => (
-              <button
-                key={i}
-                className={`time-selection-button ${selectedTime === i ? 'selected' : ''}`}
-                onClick={() => handleTimeSelection(i)}
-              >
-                {i < 10 ? `0${i}:00` : `${i}:00`}
-              </button>
-            ))}
+          <div className="dropdown">
+            <select className="dropdown-select" value={selectedTime} onChange={handleTimeSelection}>
+              <option value="">-- Select Time --</option>
+              {timesOfDay.map((time) => (
+                <option key={time} value={time}>
+                  {time}
+                </option>
+              ))}
+            </select>
+            <div className="dropdown-indicator"></div>
           </div>
         </div>
         <div className="day-selection">
           <span className="day-selection-label">Select Day:</span>
-          {daysOfWeek.map((day) => (
-            <button
-              key={day}
-              className={`day-selection-button ${selectedDay === day ? 'selected' : ''}`}
-              onClick={() => handleDaySelection(day)}
-            >
-              {day}
-            </button>
-          ))}
+          <div className="dropdown">
+            <select className="dropdown-select" value={selectedDay} onChange={handleDaySelection}>
+              <option value="">-- Select Day --</option>
+              {daysOfWeek.map((day) => (
+                <option key={day} value={day}>
+                  {day}
+                </option>
+              ))}
+            </select>
+            <div className="dropdown-indicator"></div>
+          </div>
         </div>
         <button
           className="add-task-button"
@@ -112,7 +112,7 @@ const Calendar = () => {
               {tasks[day] && tasks[day].length > 0 ? (
                 tasks[day].map((task) => (
                   <li key={task.id} className="task-item">
-                    <span className="task-time">{task.time < 10 ? `0${task.time}:00` : `${task.time}:00`}</span>
+                    <span className="task-time">{task.time}</span>
                     <span className="task-text">{task.text}</span>
                     <button
                       className="remove-task-button"
@@ -134,4 +134,3 @@ const Calendar = () => {
 };
 
 export default Calendar;
-  
